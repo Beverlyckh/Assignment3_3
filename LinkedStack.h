@@ -58,14 +58,16 @@ void LinkedStack<T>::push(T& item){
 //POP IMPLEMENTATION: removes a value to a stack
 template <class T>
 T LinkedStack<T>::pop(){
+	while(!isEmpty()){
 	node <T> *p;
 	p = top;
 	if(top!=NULL){
 
 		top = top ->next;
 	}
-
+	
 	return p->data;
+}
 }
 //isEmpty: returns if the LinkedStack is empty or not
 template <class T>

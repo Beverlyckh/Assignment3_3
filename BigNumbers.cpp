@@ -1,7 +1,9 @@
 /*
  * BigNumbers.cpp
  *
- *  Created on: Oct 30, 2017
+ *Use a stack to add two large numbers
+ *Use
+ *  Created on: Nov 21, 2017
  *  Author: Beverly ACKAH
  *
  */
@@ -11,17 +13,10 @@
 #include <string>
 using namespace std;
 
-string sum(string,string);
-
 int main(){
 	LinkedStack<int> s1; // first stack will hold the digits of the first number,
 	LinkedStack<int> s2; // second stack will hold the digits of the second number,
 	LinkedStack<int> s3; // third stack will store the digits of the sum.
-	//Algorithm
-	//1. Reverse both string if n1<n2
-	//2. Add digits from 0th index to end of smaller string
-	//take last digit of sum + keep track of carry
-	//reverse the result
 
 	string number1, number2;
 
@@ -31,41 +26,81 @@ int main(){
 	cout<<"Enter a very large number:"<<endl;
 	cin>>number2;
 
-	cout << "The result is: " << sum(number1,number2);
-
-	return 0;
-};
-
-string sum(string number1, string number2){
-
+	// swap number
 	if(number1.length() < number2.length()){
 		swap(number1, number2);
 	}
 
-	string str = "";
+	// convert and push!
+	for (int i= 0; i< number1.length() ; i++){
+		char ch = number1[i];
+		int value = ch -'0';
+		s1.push(value);
+	}
 
-	int n1 = number1.length();
-	int n2 = number2.length();
+	// convert and push!
+	for (int i= 0; i< number2.length() ; i++){
+		char ch = number2[i];
+		int value = ch - '0';
+		s2.push(value);
+	}
 
 	int carry = 0;
+	int sum;
 
-	for(int i = (n1-1); i>=0; i--){
-		int sum = ((number1[i] - '0') + (number2[i+(n2-n1)] - '0') + carry);
-		str.push_back(sum%10 + '0');
-		carry = sum/10;
+	while(!s1.isEmpty() && !s2.isEmpty()){ //s1 remains the larger stack put back
+		int num1 = s1.pop();
+		int num2 = s2.pop();
+		sum = num1 + num2+ carry;
+
+		//there is a carry
+		if(sum > 9){
+			int remainder = sum%10;
+			s3.push(remainder);
+			carry = sum/10;
+		}
+		else {
+			carry =0;
+			s3.push(sum);
+		}
 	}
-	for (int i=n2-n1-1; i>=0; i--){
-	        int sum = ((number2[i]-'0')+carry);
-	        str.push_back(sum%10 + '0');
-	        carry = sum/10;
-	    }
+	if(!s1.isEmpty()){
+		while(!s1.isEmpty()){
+			int num1 = s1.pop();
+			sum = num1 + carry;
+			if(sum > 9){
+				int remainder = sum%10;
+				s3.push(remainder);
+				carry = sum/10;
+			}
+			else {
+				carry =0;
+				s3.push(sum);
+			}
+		}
+	}
+	if(!s2.isEmpty()){
+		while(!s2.isEmpty()){
+			int num2 = s2.pop();
+			sum = num2 + carry;
+			if(sum > 9){
+				int remainder = sum%10;
+				s3.push(remainder);
+				carry = sum/10;
+			}
+			else {
+				carry =0;
+				s3.push(sum);
+			}
+		}
+	}
 
-	    if (carry)
-	        str.push_back(carry+'0');
+	string str = "";
 
-	    reverse(str.begin(), str.end());
+	while(!s3.isEmpty()){
+		str += s3.pop() + '0';
+	}
+	cout << "Sum is:" << str;
 
-	    return str;
-
-	    //cout << "The result is: " << str ;
-}
+	return 0;
+};
